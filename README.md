@@ -25,14 +25,15 @@ This prototype demonstrates the core architecture behind **adaptive learning pla
 
 ---
 
-# 3. System Architecture
+## 3. System Architecture
 
-The system follows a **modular backend architecture**.
+The system follows a **modular backend architecture** designed for scalability and clear separation of concerns.
+
 
 ```
-Client / Frontend
+Client (Swagger UI / API Consumer)
         ↓
-FastAPI API Layer
+FastAPI Application Layer
         ↓
 Adaptive Testing Engine
         ↓
@@ -378,7 +379,7 @@ Some aspects required manual debugging and reasoning:
 - Managing OpenAI API errors and quota handling  
 - Ensuring clean API endpoint separation  
 
-AI accelerated development, but final integration and debugging required manual intervention.
+**AI accelerated development, but final integration and debugging required manual intervention**.
 ---
 
 # Repository
