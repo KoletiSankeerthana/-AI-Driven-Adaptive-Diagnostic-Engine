@@ -1,11 +1,15 @@
 
 # 🚀 AI-Driven Adaptive Diagnostic Engine
 
+![Python](https://img.shields.io/badge/Python-3.10-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
+
 An AI-powered backend system that dynamically evaluates a student's ability level through **adaptive testing** and generates a **personalized study plan**.
 
 Unlike traditional static exams, this system adjusts the difficulty of each question based on the user's previous responses, enabling a more accurate assessment of their proficiency.
 
 The project demonstrates the core architecture used in **adaptive learning platforms like GRE, GMAT, and modern EdTech systems**.
+
 
 ---
 
@@ -82,16 +86,19 @@ Copy the example environment file.
 
 ### Mac / Linux
 
+```bash
 cp .env.example .env
+```
 
 ### Windows
 
+```bash
 copy .env.example .env
 ```
 
 Edit `.env` and add your configuration:
 
-```
+```env
 MONGO_URI=mongodb://localhost:27017
 OPENAI_API_KEY=your_openai_api_key
 PORT=8000
@@ -156,7 +163,7 @@ Response:
 
 ```json
 {
- "session_id": "uuid-session-id"
+  "session_id": "uuid-session-id"
 }
 ```
 
@@ -174,10 +181,10 @@ Example response:
 
 ```json
 {
- "question_id": "64bc01f8e13d9abcde123456",
- "question": "What are the solutions to x^2 - 16 = 0?",
- "options": ["4","-4","4 and -4","16"],
- "difficulty": 0.5
+  "question_id": "64bc01f8e13d9abcde123456",
+  "question": "What are the solutions to x^2 - 16 = 0?",
+  "options": ["4","-4","4 and -4","16"],
+  "difficulty": 0.5
 }
 ```
 
@@ -193,9 +200,9 @@ Example request:
 
 ```json
 {
- "session_id": "session-id",
- "question_id": "question-id",
- "answer": "4 and -4"
+  "session_id": "session-id",
+  "question_id": "question-id",
+  "answer": "4 and -4"
 }
 ```
 
@@ -203,8 +210,8 @@ Example response:
 
 ```json
 {
- "correct": true,
- "updated_ability": 0.55
+  "correct": true,
+  "updated_ability": 0.55
 }
 ```
 
@@ -231,13 +238,14 @@ Example response:
 
 ```json
 {
- "study_plan": [
-  "Review Algebra fundamentals",
-  "Practice medium difficulty GRE questions",
-  "Take timed quizzes to improve speed"
- ]
+  "study_plan": [
+    "Review Algebra fundamentals",
+    "Practice medium difficulty GRE questions",
+    "Take timed quizzes to improve speed"
+  ]
 }
 ```
+
 ---
 
 # 🏗 System Architecture
@@ -441,5 +449,3 @@ AI accelerated development but final integration required manual reasoning.
 ```
 https://github.com/KoletiSankeerthana/-AI-Driven-Adaptive-Diagnostic-Engine
 ```
-
-
