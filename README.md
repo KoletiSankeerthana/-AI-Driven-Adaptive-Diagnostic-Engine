@@ -1,147 +1,406 @@
+---
+
 # AI-Driven Adaptive Diagnostic Engine
 
 ## 1. Project Overview
-The AI-Driven Adaptive Diagnostic Engine is a backend service designed to provide a personalized, adaptive testing experience. It dynamically assesses a user's ability level by serving questions tailored to their changing proficiency as they progress through the test. Upon completion, the engine generates a highly personalized, AI-powered study plan to help the user improve on identified weak areas.
 
-## 2. System Architecture
-The project utilizes a clean, modular architecture:
-- **FastAPI**: Serves as the robust, high-performance web framework handling RESTful API requests.
-- **MongoDB**: The NoSQL database storing the question bank, user session states, and test responses.
-- **Adaptive Engine**: Core business logic (housed in `services/adaptive_engine.py`) responsible for calculating ability scores and selecting optimal questions.
-- **AI Service**: Integrates with the OpenAI API to analyze test results and generate customized study plans.
+The **AI-Driven Adaptive Diagnostic Engine** is a backend system that dynamically evaluates a student's ability level by adapting the difficulty of questions based on their previous responses.
 
-## 3. Adaptive Algorithm Logic
-The diagnostic test behaves as a 1-D adaptive prototype using a simplified Item Response Theory (IRT) model:
-- **Initialization**: Every user session starts with a baseline `ability_score` of `0.5`.
-- **Question Selection**: The engine fetches questions from MongoDB, excluding previously answered ones, and selects the question whose `difficulty` rating (0.1 - 1.0) is mathematically closest to the user's current ability score.
-- **Score Updating**: After each submitted answer, the ability score is recalculated using:
-  - `P(correct) = 1 / (1 + exp(-(ability - difficulty)))`
-  - `ability_new = ability + learning_rate * (actual - P(correct))` where `learning_rate = 0.1`.
-- The test is automatically capped at a maximum of 10 questions.
+Instead of giving every student the same static test, this system continuously estimates the student's **ability score** and selects the **most appropriate next question**.
 
-## 4. Tech Stack
-- **Framework**: FastAPI (Python 3.10+)
-- **Database**: MongoDB (via `pymongo`)
-- **Data Validation**: Pydantic
-- **AI Integration**: OpenAI API (`gpt-4o`)
+After the diagnostic test finishes, the system generates a **personalized AI-powered study plan** using an LLM to help the student improve their weak areas.
 
-## 5. API Documentation
+This prototype demonstrates the core architecture behind **adaptive learning platforms used by systems like GRE, GMAT, and modern EdTech platforms**.
 
-### `POST /session/start-session`
-Creates a new test session and initializes the user's ability score to a baseline of 0.5.
+---
 
-**Example Request:**
-```http
+# 2. Key Features
+
+• Adaptive question selection based on user ability
+• Dynamic ability score estimation using simplified **Item Response Theory (IRT)**
+• MongoDB based question bank and session tracking
+• FastAPI backend with modular architecture
+• AI-generated personalized study plan
+• Clean API design with Swagger documentation
+• Scalable backend architecture
+
+---
+
+# 3. System Architecture
+
+The system follows a **modular backend architecture**.
+
+```
+Client / Frontend
+        ↓
+FastAPI API Layer
+        ↓
+Adaptive Testing Engine
+        ↓
+MongoDB Database
+        ↓
+AI Study Plan Generator (OpenAI API)
+```
+
+### Components
+
+**FastAPI**
+
+* Handles REST API requests
+* Provides interactive Swagger API testing
+
+**MongoDB**
+
+* Stores questions
+* Stores user sessions
+* Tracks answered questions
+
+**Adaptive Engine**
+
+* Calculates user ability score
+* Selects optimal next question
+* Implements simplified IRT logic
+
+**AI Service**
+
+* Uses OpenAI API
+* Generates personalized learning plan
+
+---
+
+# 4. Project Structure
+
+```
+adaptive-diagnostic-engine
+│
+├── app
+│   ├── main.py
+│   ├── database
+│   │     └── mongodb.py
+│   ├── models
+│   │     └── schemas.py
+│   ├── routes
+│   │     ├── session_routes.py
+│   │     └── question_routes.py
+│   └── services
+│         ├── adaptive_engine.py
+│         └── ai_service.py
+│
+├── scripts
+│   └── seed_questions.py
+│
+├── requirements.txt
+├── README.md
+├── .gitignore
+└── .env.example
+```
+
+---
+
+# 5. Adaptive Algorithm Logic
+
+The diagnostic engine uses a simplified **1-Dimensional Item Response Theory (IRT) model**.
+
+### Step 1 — Session Initialization
+
+Every user session starts with:
+
+```
+ability_score = 0.5
+```
+
+This represents a **medium baseline ability**.
+
+---
+
+### Step 2 — Adaptive Question Selection
+
+The system retrieves questions from MongoDB and selects the one whose difficulty is closest to the user's ability.
+
+```
+| difficulty − ability | → minimum
+```
+
+Example:
+
+| User Ability | Question Difficulty Selected |
+| ------------ | ---------------------------- |
+| 0.5          | 0.5                          |
+| 0.6          | 0.6                          |
+| 0.7          | 0.7                          |
+
+Previously answered questions are excluded.
+
+---
+
+### Step 3 — Ability Score Update
+
+When the user answers a question, the ability score is updated using:
+
+```
+P(correct) = 1 / (1 + exp(-(ability − difficulty)))
+```
+
+Then the ability is updated:
+
+```
+ability_new = ability + learning_rate * (actual − P(correct))
+```
+
+Where:
+
+```
+learning_rate = 0.1
+actual = 1 if correct
+actual = 0 if incorrect
+```
+
+---
+
+### Step 4 — Test Completion
+
+The diagnostic test automatically stops after:
+
+```
+10 questions
+```
+
+This keeps the test short while still estimating ability.
+
+---
+
+# 6. Tech Stack
+
+| Component       | Technology  |
+| --------------- | ----------- |
+| Backend         | FastAPI     |
+| Database        | MongoDB     |
+| Language        | Python 3.10 |
+| Data Validation | Pydantic    |
+| AI Integration  | OpenAI API  |
+| Server          | Uvicorn     |
+
+---
+
+# 7. API Documentation
+
+## 1️⃣ Start Session
+
+Creates a new diagnostic session.
+
+```
 POST /session/start-session
-Host: localhost:8000
 ```
 
-**Example Response:**
-```json
+Response
+
+```
 {
-  "session_id": "123e4567-e89b-12d3-a456-426614174000"
+ "session_id": "uuid-session-id"
 }
 ```
 
 ---
 
-### `GET /question/next/{session_id}`
-Returns the next adaptive question dynamically selected based on the user's calculated ability score. If the session is finished, it returns a completion message.
+## 2️⃣ Get Next Adaptive Question
 
-**Example Request:**
-```http
-GET /question/next/123e4567-e89b-12d3-a456-426614174000
-Host: localhost:8000
+Returns the next question based on user ability.
+
+```
+GET /question/next/{session_id}
 ```
 
-**Example Response:**
-```json
+Example response
+
+```
 {
-  "question_id": "64bc01f8e13d9abcde123456",
-  "question": "What are the solutions to x^2 - 16 = 0?",
-  "options": ["4", "-4", "4 and -4", "16"],
-  "difficulty": 0.5
+ "question_id": "64bc01f8e13d9abcde123456",
+ "question": "What are the solutions to x^2 - 16 = 0?",
+ "options": ["4", "-4", "4 and -4", "16"],
+ "difficulty": 0.5
 }
 ```
 
 ---
 
-### `POST /question/submit-answer`
-Submits the user's answer, precisely checks whether the answer is mathematically correct, and then iteratively updates their overall ability score according to the internal IRT logic.
+## 3️⃣ Submit Answer
 
-**Example Request:**
-```json
+Evaluates answer and updates ability score.
+
+```
+POST /question/submit-answer
+```
+
+Request
+
+```
 {
-  "session_id": "123e4567-e89b-12d3-a456-426614174000",
-  "question_id": "64bc01f8e13d9abcde123456",
-  "answer": "4 and -4"
+ "session_id": "session-id",
+ "question_id": "question-id",
+ "answer": "4 and -4"
 }
 ```
 
-**Example Response:**
-```json
+Response
+
+```
 {
-  "correct": true,
-  "updated_ability": 0.55
+ "correct": true,
+ "updated_ability": 0.55
 }
 ```
 
 ---
 
-### `GET /session/study-plan/{session_id}`
-Generates a personalized, 3-step study plan fueled by OpenAI's API. The plan algorithm analyzes performance, correctness, and difficult ceilings to identify and target weaknesses appropriately.
+## 4️⃣ Generate Study Plan
 
-**Example Request:**
-```http
-GET /session/study-plan/123e4567-e89b-12d3-a456-426614174000
-Host: localhost:8000
+Generates AI-powered learning recommendations.
+
+```
+GET /session/study-plan/{session_id}
 ```
 
-**Example Response:**
-```json
+Response
+
+```
 {
-  "study_plan": [
-    "Step 1: Review Algebra fundamentals, particularly solving quadratic equations and isolating variables.",
-    "Step 2: Practice GRE-style Algebra questions targeting medium difficulty (0.5 to 0.7) to build confidence.",
-    "Step 3: Take a 15-minute timed quiz exclusively composed of Algebra questions to improve both accuracy and speed."
-  ]
+ "study_plan": [
+   "Review Algebra fundamentals",
+   "Practice medium difficulty GRE questions",
+   "Take timed quizzes to improve speed"
+ ]
 }
 ```
 
-## 6. Setup Instructions
+---
 
-1. **Clone and Install Dependencies**
-   It's recommended to create a virtual environment first.
-   ```bash
-   pip install -r requirements.txt
-   ```
+# 8. Setup Instructions
 
-2. **Configuration**
-   Ensure your `.env` file is present in the root directory with the following variables:
-   ```env
-   MONGO_URI=mongodb://localhost:27017
-   OPENAI_API_KEY=your_openai_api_key_here
-   PORT=8000
-   ENVIRONMENT=development
-   ```
+## Step 1 — Install Dependencies
 
-3. **Database Seeding (Optional)**
-   You can populate the MongoDB `adaptive_test_db` with initial GRE-style questions by running:
-   ```bash
-   python scripts/seed_questions.py
-   ```
+```
+pip install -r requirements.txt
+```
 
-4. **Run the Application**
-   Start the FastAPI server utilizing uvicorn with live code reloading:
-   ```bash
-   uvicorn app.main:app --reload
-   ```
-   Navigate to [http://localhost:8000/docs](http://localhost:8000/docs) to view the interactive Swagger UI.
+---
 
-## 7. AI Log
-During development, AI-assisted coding was utilized to:
-- Generate the core boilerplate adhering to strict clean architecture principles.
-- Formulate the complex Pydantic models with advanced field validators.
-- Scaffold the mock GRE question database seeding script.
-- Engineer the IRT (Item Response Theory) logic block dynamically adjusting the user's state.
-- Write robust error handling to fallback to localized study plans upon OpenAI API failures or quota exhaustion.
+## Step 2 — Configure Environment Variables
+
+Create `.env` file:
+
+```
+MONGO_URI=mongodb://localhost:27017
+OPENAI_API_KEY=your_openai_api_key
+PORT=8000
+ENVIRONMENT=development
+```
+
+---
+
+## Step 3 — Seed Question Database
+
+```
+python scripts/seed_questions.py
+```
+
+This loads GRE-style questions into MongoDB.
+
+---
+
+## Step 4 — Run Server
+
+```
+uvicorn app.main:app --reload
+```
+
+Server runs at:
+
+```
+http://localhost:8000
+```
+
+Swagger API docs available at:
+
+```
+http://localhost:8000/docs
+```
+
+---
+
+# 9. Example Test Flow
+
+1️⃣ Start session
+
+```
+POST /session/start-session
+```
+
+2️⃣ Get first question
+
+```
+GET /question/next/{session_id}
+```
+
+3️⃣ Submit answer
+
+```
+POST /question/submit-answer
+```
+
+4️⃣ System updates ability
+
+5️⃣ Next question selected adaptively
+
+6️⃣ After 10 questions → generate study plan
+
+---
+
+# 10. AI Log
+
+AI tools such as **Cursor AI and ChatGPT** were used during development to accelerate the engineering process.
+
+AI assistance was used for:
+
+• Generating the FastAPI project structure
+• Writing MongoDB database connection utilities
+• Designing Pydantic request/response models
+• Implementing the adaptive algorithm logic
+• Generating the GRE question seeding script
+• Creating OpenAI integration for study plan generation
+• Improving error handling and modular code organization
+
+### Challenges AI Could Not Fully Solve
+
+Some aspects required manual debugging and reasoning:
+
+• Handling MongoDB session state updates correctly
+• Preventing previously answered questions from repeating
+• Adjusting the IRT ability update logic
+• Managing OpenAI API errors and quota handling
+• Ensuring clean API endpoint separation
+
+AI accelerated development but final integration and debugging required manual intervention.
+
+---
+
+# 11. Future Improvements
+
+Possible future extensions:
+
+• Web frontend interface for students
+• More advanced IRT models
+• Difficulty calibration based on real user performance
+• Detailed analytics dashboards
+• Multi-topic adaptive testing
+
+---
+
+# Repository
+
+GitHub Repository
+
+```
+https://github.com/KoletiSankeerthana/-AI-Driven-Adaptive-Diagnostic-Engine
+```
+
+---
