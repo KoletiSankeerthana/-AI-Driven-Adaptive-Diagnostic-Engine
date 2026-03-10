@@ -373,14 +373,13 @@ AI tools such as **Cursor AI** and **ChatGPT** were used during development to a
 
 Some aspects required manual debugging and reasoning:
 
-- Handling MongoDB session state updates correctly  
-- Preventing previously answered questions from repeating  
-- Adjusting the IRT ability update logic  
-- Managing OpenAI API errors and quota handling  
-- Ensuring clean API endpoint separation  
+- Handling MongoDB session state updates correctly
+- Preventing previously answered questions from repeating
+- Adjusting the IRT ability update logic
+- Managing OpenAI API errors and quota handling
+- Ensuring clean API endpoint separation
 
-**AI accelerated development, but final integration and debugging required manual intervention**.
----
+AI accelerated development, but final integration and debugging required manual intervention.
 
 # Repository
 
