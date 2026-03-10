@@ -315,7 +315,6 @@ adaptive-diagnostic-engine
 ├── README.md
 ├── .gitignore
 ├── .env.example
-└── docs/images
 ```
 
 ---
@@ -427,8 +426,6 @@ AI tools such as **Cursor AI** and **ChatGPT** were used during development to a
 * generating GRE question dataset
 * integrating OpenAI API
 * improving error handling
-
----
 
 ### Challenges AI Could Not Fully Solve
 
