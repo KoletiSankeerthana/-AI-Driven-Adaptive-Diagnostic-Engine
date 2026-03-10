@@ -1,4 +1,3 @@
----
 
 # AI-Driven Adaptive Diagnostic Engine
 
@@ -355,44 +354,31 @@ POST /question/submit-answer
 
 ---
 
-# 10. AI Log
+## 10. AI Log
 
-AI tools such as **Cursor AI and ChatGPT** were used during development to accelerate the engineering process.
+AI tools such as **Cursor AI** and **ChatGPT** were used during development to accelerate the engineering process.
 
-AI assistance was used for:
+### AI assistance was used for:
 
-• Generating the FastAPI project structure
-• Writing MongoDB database connection utilities
-• Designing Pydantic request/response models
-• Implementing the adaptive algorithm logic
-• Generating the GRE question seeding script
-• Creating OpenAI integration for study plan generation
-• Improving error handling and modular code organization
+- Generating the FastAPI project structure  
+- Writing MongoDB database connection utilities  
+- Designing Pydantic request/response models  
+- Implementing the adaptive algorithm logic  
+- Generating the GRE question seeding script  
+- Creating OpenAI integration for study plan generation  
+- Improving error handling and modular code organization  
 
 ### Challenges AI Could Not Fully Solve
 
 Some aspects required manual debugging and reasoning:
 
-• Handling MongoDB session state updates correctly
-• Preventing previously answered questions from repeating
-• Adjusting the IRT ability update logic
-• Managing OpenAI API errors and quota handling
-• Ensuring clean API endpoint separation
+- Handling MongoDB session state updates correctly  
+- Preventing previously answered questions from repeating  
+- Adjusting the IRT ability update logic  
+- Managing OpenAI API errors and quota handling  
+- Ensuring clean API endpoint separation  
 
-AI accelerated development but final integration and debugging required manual intervention.
-
----
-
-# 11. Future Improvements
-
-Possible future extensions:
-
-• Web frontend interface for students
-• More advanced IRT models
-• Difficulty calibration based on real user performance
-• Detailed analytics dashboards
-• Multi-topic adaptive testing
-
+AI accelerated development, but final integration and debugging required manual intervention.
 ---
 
 # Repository
