@@ -78,10 +78,15 @@ pip install -r requirements.txt
 
 ## 4️⃣ Configure Environment Variables
 
-Copy example environment file:
+Copy the example environment file.
 
-```bash
+### Mac / Linux
+
 cp .env.example .env
+
+### Windows
+
+copy .env.example .env
 ```
 
 Edit `.env` and add your configuration:
